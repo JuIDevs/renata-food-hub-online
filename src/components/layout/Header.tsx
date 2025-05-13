@@ -3,13 +3,11 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Search, ShoppingBag, ChevronDown } from "lucide-react";
+import { Menu, X, ShoppingBag, ChevronDown } from "lucide-react";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,18 +26,6 @@ const Header = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  const toggleSearch = () => {
-    setSearchOpen(!searchOpen);
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Search logic would go here
-    console.log(`Searching for: ${searchQuery}`);
-    setSearchOpen(false);
-    setSearchQuery("");
-  };
-
   return (
     <header
       className={`fixed w-full top-0 z-40 transition-all duration-300 ${
@@ -51,8 +37,8 @@ const Header = () => {
       <Container>
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-renata-black">
-              Distribuidora <span className="text-renata-yellow">Renata</span>
+            <span className="text-2xl font-bold">
+              <span className="text-renata-black">Distribuidora</span><span className="text-renata-yellow">Renata</span>
             </span>
           </Link>
 
@@ -74,13 +60,6 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            <button
-              className="text-renata-black hover:text-renata-yellow transition-colors"
-              onClick={toggleSearch}
-              aria-label="Search"
-            >
-              <Search size={20} />
-            </button>
             <Link to="/admin" className="hidden md:block">
               <Button variant="outline" className="border-renata-yellow text-renata-black hover:bg-renata-yellow hover:text-black">
                 Admin
@@ -116,24 +95,6 @@ const Header = () => {
                 Admin
               </Link>
             </div>
-          </div>
-        )}
-
-        {/* Search Overlay */}
-        {searchOpen && (
-          <div className="absolute inset-x-0 top-full mt-2 bg-white p-4 shadow-lg rounded-b-lg animate-slide-up">
-            <form onSubmit={handleSearchSubmit} className="flex items-center">
-              <input
-                type="text"
-                placeholder="Buscar productos..."
-                className="flex-grow p-2 border border-renata-lightgray rounded-l-lg focus:outline-none focus:ring-2 focus:ring-renata-yellow"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Button type="submit" className="rounded-l-none bg-renata-yellow text-black hover:bg-renata-darkgold">
-                <Search size={18} />
-              </Button>
-            </form>
           </div>
         )}
       </Container>

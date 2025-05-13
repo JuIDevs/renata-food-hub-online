@@ -9,9 +9,11 @@ import categories from '@/data/categories';
 interface ProductsTableProps {
   products: Product[];
   isPreview?: boolean;
+  onEditProduct?: (product: Product) => void;
+  onDeleteProduct?: (id: string) => void;
 }
 
-const ProductsTable = ({ products, isPreview = false }: ProductsTableProps) => {
+const ProductsTable = ({ products, isPreview = false, onEditProduct, onDeleteProduct }: ProductsTableProps) => {
   const getCategoryName = (categoryId: string) => {
     return categories.find(c => c.id === categoryId)?.name || 'Sin categoría';
   };
@@ -88,7 +90,7 @@ const ProductsTable = ({ products, isPreview = false }: ProductsTableProps) => {
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {product.stock} uds.
+                {product.stock > 0 ? `${product.stock} uds.` : "-"}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex space-x-1">
@@ -98,9 +100,14 @@ const ProductsTable = ({ products, isPreview = false }: ProductsTableProps) => {
                   {product.onSale && (
                     <Badge className="bg-red-500 text-white">Oferta</Badge>
                   )}
-                  {product.stock < 10 && (
+                  {product.stock < 10 && product.stock > 0 && (
                     <Badge variant="outline" className="text-orange-500 border-orange-500">
                       Bajo Stock
+                    </Badge>
+                  )}
+                  {product.stock === 0 && (
+                    <Badge variant="outline" className="text-red-500 border-red-500">
+                      Sin Stock
                     </Badge>
                   )}
                   {!product.featured && !product.onSale && product.stock >= 10 && (
@@ -110,10 +117,20 @@ const ProductsTable = ({ products, isPreview = false }: ProductsTableProps) => {
               </td>
               {!isPreview && (
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-900 mr-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-blue-600 hover:text-blue-900 mr-2"
+                    onClick={() => onEditProduct && onEditProduct(product)}
+                  >
                     <Edit size={16} />
                   </Button>
-                  <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-900">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-red-600 hover:text-red-900"
+                    onClick={() => onDeleteProduct && onDeleteProduct(product.id)}
+                  >
                     <Trash size={16} />
                   </Button>
                 </td>

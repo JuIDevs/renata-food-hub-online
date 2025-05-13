@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { useToast } from '@/hooks/use-toast';
 import { Bell, ChevronDown, LogOut, Settings, User } from 'lucide-react';
+import NotificationsDropdown from './Notifications';
 
 const AdminHeader = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   
   const handleLogout = () => {
     localStorage.removeItem('isAdminLoggedIn');
@@ -26,18 +28,29 @@ const AdminHeader = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <span className="text-xl font-bold">
-              Distribuidora <span className="text-renata-yellow">Renata</span>
+              <span className="text-black">Distribuidora</span><span className="text-renata-yellow">Renata</span>
             </span>
             <span className="ml-2 text-sm text-gray-500">| Admin</span>
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="relative">
-              <Bell size={18} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                2
-              </span>
-            </Button>
+            <div className="relative">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <Bell size={18} />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  2
+                </span>
+              </Button>
+              
+              {showNotifications && (
+                <NotificationsDropdown onClose={() => setShowNotifications(false)} />
+              )}
+            </div>
             
             <div className="relative">
               <button

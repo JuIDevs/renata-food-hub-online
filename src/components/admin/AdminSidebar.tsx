@@ -56,9 +56,13 @@ const AdminSidebar = ({ activeTab, onChangeTab }: AdminSidebarProps) => {
         </ul>
       </nav>
       
-      <div className="absolute bottom-4 left-0 right-0 p-4">
-        <Link to="/" className={`flex items-center justify-center py-2 px-4 text-sm text-renata-yellow hover:underline ${collapsed ? 'flex-col' : ''}`}>
-          <Home size={16} className={collapsed ? 'mb-1' : 'mr-2'} />
+      <div className="absolute bottom-4 left-0 right-0 px-4">
+        <Link to="/" 
+          className={`flex items-center justify-center py-3 px-4 bg-renata-yellow text-black font-medium rounded-md shadow-md hover:bg-renata-darkgold transition-colors ${
+            collapsed ? 'flex-col' : ''
+          }`}
+        >
+          <Home size={18} className={collapsed ? 'mb-1' : 'mr-2'} />
           {!collapsed && <span>Volver al sitio</span>}
         </Link>
       </div>

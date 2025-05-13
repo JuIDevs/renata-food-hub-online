@@ -8,9 +8,11 @@ import { Eye, Mail, Trash } from 'lucide-react';
 interface MessagesTableProps {
   messages: Message[];
   isPreview?: boolean;
+  onViewMessage?: (message: Message) => void;
+  onDeleteMessage?: (id: string) => void;
 }
 
-const MessagesTable = ({ messages, isPreview = false }: MessagesTableProps) => {
+const MessagesTable = ({ messages, isPreview = false, onViewMessage, onDeleteMessage }: MessagesTableProps) => {
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('es-ES', {
       year: 'numeric',
@@ -56,6 +58,9 @@ const MessagesTable = ({ messages, isPreview = false }: MessagesTableProps) => {
                   <div className="ml-4">
                     <div className="text-sm font-medium text-gray-900">{message.name}</div>
                     <div className="text-sm text-gray-500">{message.email}</div>
+                    {message.phone && (
+                      <div className="text-sm text-gray-500">{message.phone}</div>
+                    )}
                   </div>
                 </div>
               </td>
@@ -74,10 +79,20 @@ const MessagesTable = ({ messages, isPreview = false }: MessagesTableProps) => {
               </td>
               {!isPreview && (
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-900 mr-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-blue-600 hover:text-blue-900 mr-2"
+                    onClick={() => onViewMessage && onViewMessage(message)}
+                  >
                     <Eye size={16} />
                   </Button>
-                  <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-900">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-red-600 hover:text-red-900"
+                    onClick={() => onDeleteMessage && onDeleteMessage(message.id)}
+                  >
                     <Trash size={16} />
                   </Button>
                 </td>

@@ -13,6 +13,7 @@ import messages from '@/data/messages';
 interface FormValues {
   name: string;
   email: string;
+  phone: string;
   message: string;
 }
 
@@ -21,6 +22,7 @@ const ContactPage = () => {
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
     email: '',
+    phone: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,6 +50,7 @@ const ContactPage = () => {
       setFormValues({
         name: '',
         email: '',
+        phone: '',
         message: ''
       });
       
@@ -61,8 +64,8 @@ const ContactPage = () => {
   };
   
   const handleWhatsApp = () => {
-    const { name, email, message } = formValues;
-    if (!name || !email || !message) {
+    const { name, email, phone, message } = formValues;
+    if (!name || !email || !phone || !message) {
       toast({
         title: "Error",
         description: "Por favor completa todos los campos del formulario.",
@@ -72,11 +75,11 @@ const ContactPage = () => {
     }
     
     // Format the message for WhatsApp
-    const whatsappMessage = `Hola, mi nombre es ${name}. Email: ${email}. Mensaje: ${message}`;
+    const whatsappMessage = `Hola, mi nombre es ${name}. Email: ${email}. Teléfono: ${phone}. Mensaje: ${message}`;
     const encodedMessage = encodeURIComponent(whatsappMessage);
     
-    // Open WhatsApp with pre-filled message (replace with actual phone number)
-    window.open(`https://wa.me/1234567890?text=${encodedMessage}`, '_blank');
+    // Open WhatsApp with pre-filled message
+    window.open(`https://wa.me/5493512742582?text=${encodedMessage}`, '_blank');
   };
 
   return (
@@ -112,8 +115,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Dirección</h3>
-                    <p className="text-gray-600">Av. Principal #123, Ciudad</p>
-                    <p className="text-gray-600">CP 12345, País</p>
+                    <p className="text-gray-600">Mariano Fragueiro 3746, Córdoba, Argentina</p>
                   </div>
                 </div>
                 
@@ -136,21 +138,27 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">Teléfono</h3>
-                    <a href="tel:+1234567890" className="text-gray-600 hover:text-renata-yellow transition-colors">
-                      (123) 456-7890
+                    <a href="tel:+5493512742582" className="text-gray-600 hover:text-renata-yellow transition-colors">
+                      +54 9 351 274-2582
                     </a>
-                    <p className="text-gray-600">Lun - Vie, 9:00 - 18:00</p>
+                    <p className="text-gray-600">Horario de atención</p>
                   </div>
                 </div>
               </div>
               
               <div className="mt-10">
                 <h2 className="text-2xl font-bold mb-6">Nuestra Ubicación</h2>
-                <div className="rounded-lg overflow-hidden shadow-lg h-[300px] bg-gray-200">
-                  {/* Google Maps iframe would go here */}
-                  <div className="w-full h-full flex items-center justify-center text-gray-500">
-                    <p>Mapa de Google se cargará aquí</p>
-                  </div>
+                <div className="rounded-lg overflow-hidden shadow-lg h-[300px]">
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3408.3213025538196!2d-64.1799567!3d-31.3726236!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329877662af9ef%3A0x12612f7c18ee7afc!2sMariano%20Fragueiro%203746%2C%20C%C3%B3rdoba%2C%20Argentina!5e0!3m2!1ses-419!2sus!4v1715472822957!5m2!1ses-419!2sus" 
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 0 }} 
+                    allowFullScreen 
+                    loading="lazy" 
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Ubicación de Distribuidora Renata"
+                  ></iframe>
                 </div>
               </div>
             </div>
@@ -187,6 +195,21 @@ const ContactPage = () => {
                         value={formValues.email}
                         onChange={handleChange}
                         placeholder="Su correo electrónico"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                        Teléfono
+                      </label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={formValues.phone}
+                        onChange={handleChange}
+                        placeholder="Su número de teléfono"
                         required
                       />
                     </div>
@@ -241,12 +264,12 @@ const ContactPage = () => {
                 <h3 className="font-semibold text-lg mb-2">Horario de Atención</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Lunes - Viernes:</span>
-                    <span>9:00 AM - 6:00 PM</span>
+                    <span className="text-gray-600">Lunes a Viernes:</span>
+                    <span>8:30 - 13:00 y 17:00 - 20:00</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Sábado:</span>
-                    <span>9:00 AM - 1:00 PM</span>
+                    <span className="text-gray-600">Sábados:</span>
+                    <span>8:30 - 13:00</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Domingo:</span>

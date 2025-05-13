@@ -16,7 +16,7 @@ const HomePage = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-to-r from-renata-offwhite to-renata-lightgray">
+      <section className="pt-28 pb-12 bg-gradient-to-r from-renata-offwhite to-renata-lightgray">
         <Container>
           <div className="flex flex-col md:flex-row items-center gap-10 md:gap-6">
             <div className="flex-1 text-center md:text-left">
@@ -39,7 +39,7 @@ const HomePage = () => {
               <img 
                 src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=800&auto=format&fit=crop" 
                 alt="Distribuidora de alimentos" 
-                className="rounded-lg shadow-lg max-w-full h-auto yellow-glow"
+                className="rounded-lg shadow-lg max-w-full h-64 object-cover w-full yellow-glow"
               />
             </div>
           </div>
@@ -49,7 +49,7 @@ const HomePage = () => {
       {/* Features Section */}
       <section className="py-16 bg-white">
         <Container>
-          <h2 className="text-3xl font-bold text-center mb-12">¿Por qué elegir <span className="text-renata-yellow">Distribuidora Renata</span>?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">¿Por qué elegir <span className="text-renata-yellow">Distribuidora</span><span className="text-black">Renata</span>?</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="bg-renata-lightgray p-6 rounded-lg text-center hover:shadow-lg transition-shadow duration-300">

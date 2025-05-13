@@ -7,16 +7,28 @@ import AdminHeader from '@/components/admin/AdminHeader';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import ProductsTable from '@/components/admin/ProductsTable';
 import MessagesTable from '@/components/admin/MessagesTable';
+import ProductForm from '@/components/admin/ProductForm';
+import CategoryForm from '@/components/admin/CategoryForm';
+import MessageView from '@/components/admin/MessageView';
+import Settings from '@/components/admin/Settings';
 import { useToast } from '@/hooks/use-toast';
-import { ShoppingBag, Package, Mail, TrendingUp } from 'lucide-react';
+import { ShoppingBag, Package, Mail, TrendingUp, Plus, Grid3X3 } from 'lucide-react';
 import products from '@/data/products';
 import messages from '@/data/messages';
+import categories from '@/data/categories';
 
 const AdminDashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedMessage, setSelectedMessage] = useState<any>(null);
+  const [productsState, setProductsState] = useState([...products]);
+  const [messagesState, setMessagesState] = useState([...messages]);
+  const [categoriesState, setCategoriesState] = useState([...categories]);
   
   useEffect(() => {
     const checkAuth = () => {
@@ -36,14 +48,119 @@ const AdminDashboard = () => {
     checkAuth();
   }, [navigate, toast]);
   
+  const handleAddProduct = () => {
+    setSelectedProduct(null);
+    setShowProductForm(true);
+  };
+  
+  const handleEditProduct = (product: any) => {
+    setSelectedProduct(product);
+    setShowProductForm(true);
+  };
+  
+  const handleDeleteProduct = (id: string) => {
+    // Show confirmation before deleting
+    const confirmDelete = window.confirm('¿Está seguro que desea eliminar este producto?');
+    if (confirmDelete) {
+      const updatedProducts = productsState.filter(product => product.id !== id);
+      setProductsState(updatedProducts);
+      
+      toast({
+        title: "Producto eliminado",
+        description: "El producto ha sido eliminado correctamente"
+      });
+    }
+  };
+  
+  const handleSaveProduct = (productData: any) => {
+    if (selectedProduct) {
+      // Edit existing product
+      const updatedProducts = productsState.map(product => 
+        product.id === selectedProduct.id 
+          ? { ...product, ...productData } 
+          : product
+      );
+      setProductsState(updatedProducts);
+      
+      toast({
+        title: "Producto actualizado",
+        description: "El producto ha sido actualizado correctamente"
+      });
+    } else {
+      // Add new product
+      const newProduct = {
+        id: `product-${productsState.length + 1}`,
+        ...productData
+      };
+      setProductsState([...productsState, newProduct]);
+      
+      toast({
+        title: "Producto añadido",
+        description: "El producto ha sido añadido correctamente"
+      });
+    }
+    
+    setShowProductForm(false);
+    setSelectedProduct(null);
+  };
+  
+  const handleAddCategory = () => {
+    setShowCategoryForm(true);
+  };
+  
+  const handleSaveCategory = (categoryData: any) => {
+    setCategoriesState([...categoriesState, categoryData]);
+    
+    toast({
+      title: "Categoría añadida",
+      description: "La categoría ha sido añadida correctamente"
+    });
+    
+    setShowCategoryForm(false);
+  };
+  
+  const handleViewMessage = (message: any) => {
+    // Mark message as read
+    const updatedMessages = messagesState.map(msg => 
+      msg.id === message.id 
+        ? { ...msg, read: true } 
+        : msg
+    );
+    setMessagesState(updatedMessages);
+    setSelectedMessage(message);
+  };
+  
+  const handleDeleteMessage = (id: string) => {
+    const updatedMessages = messagesState.filter(message => message.id !== id);
+    setMessagesState(updatedMessages);
+    
+    if (selectedMessage && selectedMessage.id === id) {
+      setSelectedMessage(null);
+    }
+    
+    toast({
+      title: "Mensaje eliminado",
+      description: "El mensaje ha sido eliminado correctamente"
+    });
+  };
+  
+  const handleMarkMessageAsRead = (id: string) => {
+    const updatedMessages = messagesState.map(message => 
+      message.id === id 
+        ? { ...message, read: true } 
+        : message
+    );
+    setMessagesState(updatedMessages);
+  };
+  
   if (!isLoggedIn) {
     return null; // Don't render anything while checking auth
   }
   
-  const totalProducts = products.length;
-  const productsInStock = products.filter(p => p.stock > 0).length;
-  const lowStockProducts = products.filter(p => p.stock < 10).length;
-  const unreadMessages = messages.filter(m => !m.read).length;
+  const totalProducts = productsState.length;
+  const productsInStock = productsState.filter(p => p.stock > 0).length;
+  const lowStockProducts = productsState.filter(p => p.stock < 10 && p.stock > 0).length;
+  const unreadMessages = messagesState.filter(m => !m.read).length;
   
   return (
     <div className="min-h-screen bg-renata-offwhite">
@@ -126,7 +243,7 @@ const AdminDashboard = () => {
                   </div>
                   
                   <div className="overflow-x-auto">
-                    <ProductsTable products={products.slice(0, 5)} isPreview={true} />
+                    <ProductsTable products={productsState.slice(0, 5)} isPreview={true} />
                   </div>
                 </div>
                 
@@ -144,28 +261,54 @@ const AdminDashboard = () => {
                   </div>
                   
                   <div className="overflow-x-auto">
-                    <MessagesTable messages={messages.slice(0, 3)} isPreview={true} />
+                    <MessagesTable messages={messagesState.slice(0, 3)} isPreview={true} />
                   </div>
                 </div>
               </>
             )}
             
-            {activeTab === 'products' && (
+            {activeTab === 'products' && !showProductForm && !showCategoryForm && (
               <>
                 <div className="flex justify-between items-center mb-6">
                   <h1 className="text-2xl font-bold">Gestión de Productos</h1>
-                  <Button className="bg-renata-yellow text-black hover:bg-renata-darkgold">
-                    Añadir Producto
-                  </Button>
+                  <div className="flex space-x-3">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={handleAddCategory}>
+                      <Grid3X3 size={18} className="mr-2" />
+                      Añadir Categoría
+                    </Button>
+                    <Button className="bg-renata-yellow text-black hover:bg-renata-darkgold" onClick={handleAddProduct}>
+                      <Plus size={18} className="mr-2" />
+                      Añadir Producto
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="bg-white rounded-lg shadow-md p-6">
-                  <ProductsTable products={products} />
+                  <ProductsTable 
+                    products={productsState}
+                    onEditProduct={handleEditProduct}
+                    onDeleteProduct={handleDeleteProduct}
+                  />
                 </div>
               </>
             )}
             
-            {activeTab === 'messages' && (
+            {activeTab === 'products' && showProductForm && (
+              <ProductForm 
+                product={selectedProduct}
+                onSubmit={handleSaveProduct}
+                onCancel={() => setShowProductForm(false)}
+              />
+            )}
+            
+            {activeTab === 'products' && showCategoryForm && (
+              <CategoryForm
+                onSubmit={handleSaveCategory}
+                onCancel={() => setShowCategoryForm(false)}
+              />
+            )}
+            
+            {activeTab === 'messages' && !selectedMessage && (
               <>
                 <div className="mb-6">
                   <h1 className="text-2xl font-bold">Mensajes de Contacto</h1>
@@ -173,9 +316,26 @@ const AdminDashboard = () => {
                 </div>
                 
                 <div className="bg-white rounded-lg shadow-md p-6">
-                  <MessagesTable messages={messages} />
+                  <MessagesTable 
+                    messages={messagesState}
+                    onViewMessage={handleViewMessage}
+                    onDeleteMessage={handleDeleteMessage}
+                  />
                 </div>
               </>
+            )}
+            
+            {activeTab === 'messages' && selectedMessage && (
+              <MessageView 
+                message={selectedMessage}
+                onClose={() => setSelectedMessage(null)}
+                onDelete={handleDeleteMessage}
+                onMarkAsRead={handleMarkMessageAsRead}
+              />
+            )}
+            
+            {activeTab === 'settings' && (
+              <Settings />
             )}
           </Container>
         </main>
